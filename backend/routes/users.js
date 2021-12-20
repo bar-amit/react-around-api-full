@@ -1,15 +1,33 @@
-const usersRouter = require('express').Router();
+const usersRouter = require("express").Router();
+const { auth } = require("../middlewares/auth");
 const {
-  getUsers, getUserById, postUsers, updateUser, updateAvatar,
-} = require('../controllers/users');
+  getUserInfo,
+  getUsers,
+  getUserById,
+  postUsers,
+  updateUser,
+  updateAvatar,
+  loginUser,
+} = require("../controllers/users");
 
 /*
-    user routes:
+    unprotected user routes:
 */
-usersRouter.get('/users/:id', getUserById);
-usersRouter.get('/users', getUsers);
-usersRouter.post('/users', postUsers);
-usersRouter.patch('/users/me', updateUser);
-usersRouter.patch('/users/me/avatar', updateAvatar);
+usersRouter.post("/signup", postUsers);
+usersRouter.post("/signin", loginUser);
+
+/*
+  Authorization:
+*/
+usersRouter.use(auth);
+
+/*
+    protected user routes:
+*/
+usersRouter.get("/users/:id", getUserById);
+usersRouter.get("/users", getUsers);
+usersRouter.get("/users/me", getUserInfo);
+usersRouter.patch("/users/me", updateUser);
+usersRouter.patch("/users/me/avatar", updateAvatar);
 
 module.exports = { usersRouter };
