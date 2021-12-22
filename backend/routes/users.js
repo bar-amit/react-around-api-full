@@ -4,7 +4,7 @@ const {
   getUserInfo,
   getUsers,
   getUserById,
-  postUsers,
+  registerUser,
   updateUser,
   updateAvatar,
   loginUser,
@@ -13,7 +13,7 @@ const {
 /*
     unprotected user routes:
 */
-usersRouter.post("/signup", postUsers);
+usersRouter.post("/signup", registerUser);
 usersRouter.post("/signin", loginUser);
 
 /*
@@ -24,10 +24,10 @@ usersRouter.use(auth);
 /*
     protected user routes:
 */
-usersRouter.get("/users/:id", getUserById);
-usersRouter.get("/users", getUsers);
 usersRouter.get("/users/me", getUserInfo);
 usersRouter.patch("/users/me", updateUser);
 usersRouter.patch("/users/me/avatar", updateAvatar);
+usersRouter.get("/users/:id", getUserById);
+usersRouter.get("/users", getUsers);
 
 module.exports = { usersRouter };

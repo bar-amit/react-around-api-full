@@ -3,6 +3,7 @@ const card = require("../models/card");
 function getCards(req, res) {
   card
     .find({})
+    .sort({ createdAt: "desc" })
     .then((data) => res.send(data))
     .catch(() =>
       res.status(500).send({ message: "An error has occurred on the server" })
@@ -14,7 +15,7 @@ function postCard(req, res) {
   const { _id: userId } = req.user;
   card
     .create({ name, link, owner: userId })
-    .then((newCard) => res.send({ card: newCard }))
+    .then((newCard) => res.send(newCard))
     .catch((err) => res.status(400).send({ message: err.message }));
 }
 

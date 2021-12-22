@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const user = require('./user');
-const urlValidator = require('../utils/urlValidator');
+const mongoose = require("mongoose");
+const user = require("./user");
+const urlValidator = require("../utils/urlValidator");
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,9 +11,6 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    validate: {
-      validator: urlValidator,
-    },
     required: true,
   },
   owner: {
@@ -34,4 +31,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('card', cardSchema);
+module.exports = mongoose.model("card", cardSchema);

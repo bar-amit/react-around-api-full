@@ -16,9 +16,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    validate: {
-      validator: urlValidator,
-    },
     required: true,
   },
   email: {

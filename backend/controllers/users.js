@@ -43,13 +43,14 @@ function getUserById(req, res) {
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
-
   try {
-    const userData = user.findOne({ email }).select("+password");
-    if (!userData) Promise.reject(new Error("Incorrect password or email"));
-    const isAuthenticated = bcrypt.compare(userData.password, password);
+    const userData = await user.findOne({ email }).select("+password");
+    if (!userData)
+      res.status(401).send({ message: "Incorrect password or email" });
+    const isAuthenticated = await bcrypt.compare(password, userData.password);
     if (!isAuthenticated)
-      Promise.reject(new Error("Incorrect password or email"));
+      res.status(401).send({ message: "Incorrect password or email" });
+
     const token = jwt.sign({ _id: userData._id }, JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -59,7 +60,7 @@ async function loginUser(req, res) {
   }
 }
 
-async function postUsers(req, res) {
+async function registerUser(req, res) {
   const {
     name = "Jacques Cousteau",
     about = "Explorer",
@@ -83,7 +84,7 @@ async function postUsers(req, res) {
     if (err.name === "ValidationError")
       res.status(400).send({ message: err.message });
     else
-      res.status(500).send({ message: "An error has occurred on the server" });
+      res.status(500).send({ message: "An error has occurred on the server!" });
   }
 }
 
@@ -96,7 +97,7 @@ async function updateUser(req, res) {
       { name, about },
       { returnDocument: "after", runValidators: true }
     );
-    if (updatedUser) res.send({ user: updatedUser });
+    if (updatedUser) res.send(updatedUser);
     else
       res.status(500).send({ message: "An error has occurred on the server" });
   } catch (err) {
@@ -116,7 +117,7 @@ async function updateAvatar(req, res) {
       { avatar },
       { returnDocument: "after", runValidators: true }
     );
-    if (updatedUser) res.send({ user: updatedUser });
+    if (updatedUser) res.send(updatedUser);
     else
       res.status(500).send({ message: "An error has occurred on the server" });
   } catch (err) {
@@ -131,7 +132,7 @@ module.exports = {
   getUserInfo,
   getUsers,
   getUserById,
-  postUsers,
+  registerUser,
   updateUser,
   updateAvatar,
   loginUser,
