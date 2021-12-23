@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const { usersRouter } = require("./routes/users");
 const { cardsRouter } = require("./routes/cards");
 const handleNotFound = require("./controllers/notFound");
-const errorHandler = require("./middlewares/errorHandler");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 

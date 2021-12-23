@@ -1,11 +1,3 @@
-module.exports = {
-  unauthorizedErorr,
-  forbiddenError,
-  badRequestError,
-  notFoundError,
-  serverError,
-};
-
 class badRequestError extends Error {
   constructor(message) {
     super(message);
@@ -40,3 +32,11 @@ class serverError extends Error {
     this.statusCode = 500;
   }
 }
+
+module.exports = {
+  unauthorizedErorr,
+  forbiddenError,
+  badRequestError,
+  notFoundError,
+  serverError,
+};
