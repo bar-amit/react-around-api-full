@@ -10,21 +10,21 @@ const {
   unauthorizedErorr,
 } = require("../utils/errors");
 
-function getUsers(req, res) {
+function getUsers(req, res, next) {
   user
     .find({})
     .then((data) => res.send(data))
     .catch((err) => next(new serverError(err.message)));
 }
 
-function getUserInfo(req, res) {
+function getUserInfo(req, res, next) {
   user
     .findById(req.user._id)
     .then((userData) => res.send(userData))
     .catch((err) => next(new serverError(err.message)));
 }
 
-function getUserById(req, res) {
+function getUserById(req, res, next) {
   const { id } = req.params;
   if (!/^[a-zA-Z0-9]{24}$/.test(id)) next(new badRequestError("Invalid ID"));
   user
@@ -38,7 +38,7 @@ function getUserById(req, res) {
     });
 }
 
-async function loginUser(req, res) {
+async function loginUser(req, res, next) {
   const { email, password } = req.body;
   try {
     const userData = await user.findOne({ email }).select("+password");
@@ -55,7 +55,7 @@ async function loginUser(req, res) {
   }
 }
 
-async function registerUser(req, res) {
+async function registerUser(req, res, next) {
   const {
     name = "Jacques Cousteau",
     about = "Explorer",
@@ -79,7 +79,7 @@ async function registerUser(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+async function updateUser(req, res, next) {
   const { _id: id } = req.user;
   const { name, about } = req.body;
   try {
@@ -95,7 +95,7 @@ async function updateUser(req, res) {
   }
 }
 
-async function updateAvatar(req, res) {
+async function updateAvatar(req, res, next) {
   const { _id: id } = req.user;
   const { avatar } = req.body;
   try {

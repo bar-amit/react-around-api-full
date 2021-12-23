@@ -6,7 +6,7 @@ const {
   serverError,
 } = require("../utils/errors");
 
-function getCards(req, res) {
+function getCards(req, res, next) {
   card
     .find({})
     .sort({ createdAt: "desc" })
@@ -14,7 +14,7 @@ function getCards(req, res) {
     .catch(() => next(new serverError("An error has occurred on the server")));
 }
 
-function postCard(req, res) {
+function postCard(req, res, next) {
   const { name, link } = req.body;
   const { _id: userId } = req.user;
   card
@@ -23,7 +23,7 @@ function postCard(req, res) {
     .catch((err) => next(new badRequestError(err.message)));
 }
 
-async function deleteCard(req, res) {
+async function deleteCard(req, res, next) {
   const { _id: userId } = req.user;
   const { id } = req.params;
   try {
@@ -41,11 +41,12 @@ async function deleteCard(req, res) {
   }
 }
 
-async function likeCard(req, res) {
+async function likeCard(req, res, next) {
   const { _id: userId } = req.user;
   const { id: cardId } = req.params;
   try {
-    if (!/^[a-zA-Z0-9]{24}$/.test(id)) next(new badRequestError("Invalid ID"));
+    if (!/^[a-zA-Z0-9]{24}$/.test(cardId))
+      next(new badRequestError("Invalid ID"));
     const updatedCard =
       req.method === "PUT"
         ? await card.findByIdAndUpdate(
