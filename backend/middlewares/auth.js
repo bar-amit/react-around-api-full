@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET = "not-a-secret-just-a-string" } = process.env;
+const { forbiddenError, unauthorizedErorr } = require("../utils/errors");
 
 function auth(req, res, next) {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res.status(403).send({ message: "Authorization required" });
+    next(new forbiddenError("Access is forbidden"));
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -14,7 +15,7 @@ function auth(req, res, next) {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return res.status(401).send({ message: "Authorization required" });
+    next(new unauthorizedErorr("Authorization is required"));
   }
 
   req.user = payload;

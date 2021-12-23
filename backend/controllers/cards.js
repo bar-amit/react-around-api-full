@@ -1,13 +1,17 @@
 const card = require("../models/card");
+const {
+  forbiddenError,
+  badRequestError,
+  notFoundError,
+  serverError,
+} = require("../utils/errors");
 
 function getCards(req, res) {
   card
     .find({})
     .sort({ createdAt: "desc" })
     .then((data) => res.send(data))
-    .catch(() =>
-      res.status(500).send({ message: "An error has occurred on the server" })
-    );
+    .catch(() => next(new serverError("An error has occurred on the server")));
 }
 
 function postCard(req, res) {
@@ -16,40 +20,24 @@ function postCard(req, res) {
   card
     .create({ name, link, owner: userId })
     .then((newCard) => res.send(newCard))
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => next(new badRequestError(err.message)));
 }
 
 async function deleteCard(req, res) {
   const { _id: userId } = req.user;
   const { id } = req.params;
   try {
-    if (!/^[a-zA-Z0-9]{24}$/.test(id)) {
-      const invalidIdError = new Error("Invalid Id");
-      invalidIdError.statusCode = 400;
-      throw invalidIdError;
-    }
+    if (!/^[a-zA-Z0-9]{24}$/.test(id)) next(new badRequestError("Invalid ID"));
     const cardToDelete = await card.findById(id);
-    if (!cardToDelete) {
-      const CardNotFoundError = new Error("Card ID not found");
-      CardNotFoundError.statusCode = 404;
-      throw CardNotFoundError;
-    }
+    if (!cardToDelete) next(new notFoundError("Card ID not found"));
     if (`${cardToDelete.owner}` === userId) {
       await card
         .findByIdAndDelete(id)
         .then((deletedCard) => res.send({ card: deletedCard }));
     }
-    const userDontOwnCard = new Error("Current user doesn't own this card");
-    userDontOwnCard.statusCode = 403;
-    throw userDontOwnCard;
+    next(new forbiddenError("Current user doesn't own this card"));
   } catch (err) {
-    if (
-      err.statusCode === 404 ||
-      err.statusCode === 403 ||
-      err.statusCode === 400
-    ) {
-      res.status(err.statusCode).send({ message: err.message });
-    } else res.status(500).send({ message: err.message });
+    next(new serverError(err.message));
   }
 }
 
@@ -57,11 +45,7 @@ async function likeCard(req, res) {
   const { _id: userId } = req.user;
   const { id: cardId } = req.params;
   try {
-    if (!/^[a-zA-Z0-9]{24}$/.test(cardId)) {
-      const invalidIdError = new Error("Invalid ID");
-      invalidIdError.statusCode = 400;
-      throw invalidIdError;
-    }
+    if (!/^[a-zA-Z0-9]{24}$/.test(id)) next(new badRequestError("Invalid ID"));
     const updatedCard =
       req.method === "PUT"
         ? await card.findByIdAndUpdate(
@@ -74,19 +58,10 @@ async function likeCard(req, res) {
             { $pull: { likes: userId } },
             { new: true }
           );
-    if (!updatedCard) {
-      const CardNotFoundError = new Error("Card ID not found");
-      CardNotFoundError.statusCode = 404;
-      throw CardNotFoundError;
-    } else res.send(updatedCard);
+    if (!updatedCard) next(new notFoundError("Card ID not found"));
+    res.send(updatedCard);
   } catch (err) {
-    if (
-      err.statusCode === 404 ||
-      err.statusCode === 403 ||
-      err.statusCode === 400
-    ) {
-      res.status(err.statusCode).send({ message: err.message });
-    } else res.status(500).send({ message: err.message });
+    next(new serverError(err.message));
   }
 }
 

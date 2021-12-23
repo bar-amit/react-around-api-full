@@ -1,6 +1,7 @@
+const { notFoundError } = require("../utils/errors");
+
 function handleNotFound(req, res, next) {
-  res.status(404).send({ message: 'Requested resource not found' });
-  next();
+  next(new notFoundError("Requested resource not found"));
 }
 
 module.exports = handleNotFound;

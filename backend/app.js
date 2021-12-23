@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const { usersRouter } = require("./routes/users");
 const { cardsRouter } = require("./routes/cards");
 const handleNotFound = require("./controllers/notFound");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(helmet());
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use(handleNotFound);
+app.use(errorHandler);
 
 mongoose
   .connect(DB)
