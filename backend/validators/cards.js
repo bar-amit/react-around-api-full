@@ -1,9 +1,12 @@
 const { celebrate, Joi } = require("celebrate");
 const validator = require("validator");
-const { badRequestError } = require("../utils/errors");
 
 const idValidator = celebrate({
-  params: Joi.object().keys({ id: Joi.string().required().custom(validateID) }),
+  params: Joi.object().keys({
+    id: Joi.string()
+      .required()
+      .pattern(/^[a-zA-Z0-9]{24}$/),
+  }),
 });
 
 const cardDataValidator = celebrate({
@@ -18,13 +21,6 @@ function validateURL(value, helpers) {
     return value;
   }
   return helpers.error("string.uri");
-}
-
-function validateID(value) {
-  if (/^[a-zA-Z0-9]{24}$/.test(value)) {
-    return value;
-  }
-  return new badRequestError("Invalid ID");
 }
 
 module.exports = {
