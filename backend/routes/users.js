@@ -15,6 +15,7 @@ const {
   userDataValidator,
   avatarValidator,
 } = require("../validators/users");
+const { authValidator } = require("../validators/auth");
 
 /*
     unprotected user routes:
@@ -25,7 +26,7 @@ usersRouter.post("/signin", userLoginValidator, loginUser);
 /*
   Authorization:
 */
-usersRouter.use(auth);
+usersRouter.use(authValidator, auth);
 
 /*
     protected user routes:
