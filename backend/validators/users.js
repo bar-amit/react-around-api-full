@@ -1,5 +1,12 @@
-const { celebrate, Joi } = require("celebrate");
-const validator = require("validator");
+const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
+
+function validateURL(value, helpers) {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.error('string.uri');
+}
 
 const idValidator = celebrate({
   params: Joi.object().keys({
@@ -11,7 +18,8 @@ const idValidator = celebrate({
 
 const userLoginValidator = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().min(7).max(50).email(),
+    email: Joi.string().required().min(7).max(50)
+      .email(),
     password: Joi.string().required().min(6).max(16),
   }),
 });
@@ -28,13 +36,6 @@ const avatarValidator = celebrate({
     avatar: Joi.string().required().custom(validateURL),
   }),
 });
-
-function validateURL(value, helpers) {
-  if (validator.isURL(value)) {
-    return value;
-  }
-  return helpers.error("string.uri");
-}
 
 module.exports = {
   idValidator,

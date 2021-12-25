@@ -1,26 +1,26 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const user = require("../models/user");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const user = require('../models/user');
 
-const { JWT_SECRET = "not-a-secret-just-a-string" } = process.env;
+const { JWT_SECRET = 'not-a-secret-just-a-string' } = process.env;
 const {
-  notFoundError,
-  serverError,
-  unauthorizedErorr,
-} = require("../utils/errors");
+  NotFoundError,
+  ServerError,
+  UnauthorizedErorr,
+} = require('../utils/errors');
 
 function getUsers(req, res, next) {
   user
     .find({})
     .then((data) => res.send(data))
-    .catch((err) => next(new serverError(err.message)));
+    .catch((err) => next(new ServerError(err.message)));
 }
 
 function getUserInfo(req, res, next) {
   user
     .findById(req.user._id)
     .then((userData) => res.send(userData))
-    .catch((err) => next(new serverError(err.message)));
+    .catch((err) => next(new ServerError(err.message)));
 }
 
 function getUserById(req, res, next) {
@@ -29,35 +29,34 @@ function getUserById(req, res, next) {
     .findById(id)
     .then((data) => {
       if (data) res.send(data);
-      next(new notFoundError("User ID not found"));
+      next(new NotFoundError('User ID not found'));
     })
     .catch((err) => {
-      next(new serverError(err.message));
+      next(new ServerError(err.message));
     });
 }
 
 async function loginUser(req, res, next) {
   const { email, password } = req.body;
   try {
-    const userData = await user.findOne({ email }).select("+password");
-    if (!userData) next(new unauthorizedErorr("Incorrect password or email"));
+    const userData = await user.findOne({ email }).select('+password');
+    if (!userData) next(new UnauthorizedErorr('Incorrect password or email'));
     const isAuthenticated = await bcrypt.compare(password, userData.password);
-    if (!isAuthenticated)
-      next(new unauthorizedErorr("Incorrect password or email"));
+    if (!isAuthenticated) next(new UnauthorizedErorr('Incorrect password or email'));
     const token = jwt.sign({ _id: userData._id }, JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: '7d',
     });
     res.send({ token });
   } catch (err) {
-    next(new serverError(err.message));
+    next(new ServerError(err.message));
   }
 }
 
 async function registerUser(req, res, next) {
   const {
-    name = "Jacques Cousteau",
-    about = "Explorer",
-    avatar = "https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg",
+    name = 'Jacques Cousteau',
+    about = 'Explorer',
+    avatar = 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     email,
     password,
   } = req.body;
@@ -71,9 +70,9 @@ async function registerUser(req, res, next) {
       password: hash,
     });
     if (newUser) res.send({ user: newUser });
-    else next(new serverError("An error has occurred on the server!"));
+    else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
-    next(new serverError(err.message));
+    next(new ServerError(err.message));
   }
 }
 
@@ -84,12 +83,12 @@ async function updateUser(req, res, next) {
     const updatedUser = await user.findByIdAndUpdate(
       id,
       { name, about },
-      { returnDocument: "after", runValidators: true }
+      { returnDocument: 'after', runValidators: true },
     );
     if (updatedUser) res.send(updatedUser);
-    else next(new serverError("An error has occurred on the server!"));
+    else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
-    next(new serverError(err.message));
+    next(new ServerError(err.message));
   }
 }
 
@@ -100,12 +99,12 @@ async function updateAvatar(req, res, next) {
     const updatedUser = await user.findByIdAndUpdate(
       id,
       { avatar },
-      { returnDocument: "after", runValidators: true }
+      { returnDocument: 'after', runValidators: true },
     );
     if (updatedUser) res.send(updatedUser);
-    else next(new serverError("An error has occurred on the server!"));
+    else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
-    next(new serverError(err.message));
+    next(new ServerError(err.message));
   }
 }
 
