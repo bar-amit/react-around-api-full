@@ -9,7 +9,7 @@ const {
 function getCards(req, res, next) {
   card
     .find({})
-    .sort({ createdAt: 'desc' })
+    .sort({ createdAt: 1 })
     .then((data) => res.send(data))
     .catch(() => next(new ServerError('An error has occurred on the server')));
 }
