@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -15,6 +16,7 @@ const app = express();
 const { PORT = 3001, DB = "mongodb://localhost:27017/aroundb" } = process.env;
 
 app.use(cors());
+app.options('*', cors());
 app.use(bodyParser.json());
 app.use(helmet());
 app.use(requestLogger);
