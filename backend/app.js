@@ -35,7 +35,7 @@ app.use(usersRouter);
 app.use(cardsRouter);
 app.use(handleNotFound);
 app.use(errorLogger);
-app.use(errors);
+app.use(errors());
 app.use(errorHandler);
 
 mongoose.connect(DB);
