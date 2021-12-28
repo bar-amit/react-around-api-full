@@ -20,6 +20,17 @@ app.options('*', cors());
 app.use(bodyParser.json());
 app.use(helmet());
 app.use(requestLogger);
+
+/*
+    Crach test:
+*/
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+/* Remove after the project is aproved */
+
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use(handleNotFound);
