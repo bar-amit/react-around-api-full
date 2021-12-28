@@ -73,7 +73,7 @@ async function registerUser(req, res, next) {
     if (newUser) res.send({ user: newUser });
     else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
-    if (err.name === 'duplicate key error') next(new DuplicateError('Email allready exists on the server.'));
+    if (err.code === 11000) next(new DuplicateError('Email allready exists on the server.'));
     next(new ServerError(err));
   }
 }
