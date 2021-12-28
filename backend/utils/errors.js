@@ -3,6 +3,7 @@ const UnauthorizedErorr = require('./error/UnauthorizedError');
 const ForbiddenError = require('./error/ForbiddenError');
 const NotFoundError = require('./error/NotFoundError');
 const ServerError = require('./error/ServerError');
+const DuplicateError = require('./error/DuplicateError');
 
 module.exports = {
   UnauthorizedErorr,
@@ -10,4 +11,5 @@ module.exports = {
   BadRequestError,
   NotFoundError,
   ServerError,
+  DuplicateError,
 };

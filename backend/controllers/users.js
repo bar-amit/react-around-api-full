@@ -7,6 +7,7 @@ const {
   NotFoundError,
   ServerError,
   UnauthorizedErorr,
+  DuplicateError,
 } = require('../utils/errors');
 
 function getUsers(req, res, next) {
@@ -72,7 +73,8 @@ async function registerUser(req, res, next) {
     if (newUser) res.send({ user: newUser });
     else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
-    next(new ServerError(err.message));
+    if (err.name === 'duplicate key error') next(new DuplicateError('Email allready exists on the server.'));
+    next(new ServerError(err));
   }
 }
 
