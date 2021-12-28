@@ -1,19 +1,19 @@
 require('dotenv').config();
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const { errors } = require("celebrate");
-const { usersRouter } = require("./routes/users");
-const { cardsRouter } = require("./routes/cards");
-const handleNotFound = require("./controllers/notFound");
-const { errorHandler } = require("./middlewares/errorHandler");
-const { errorLogger, requestLogger } = require("./middlewares/logger");
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const { usersRouter } = require('./routes/users');
+const { cardsRouter } = require('./routes/cards');
+const handleNotFound = require('./controllers/notFound');
+const { errorHandler } = require('./middlewares/errorHandler');
+const { errorLogger, requestLogger } = require('./middlewares/logger');
 
 const app = express();
 
-const { PORT = 3000, DB = "mongodb://localhost:27017/aroundb" } = process.env;
+const { PORT = 3000, DB = 'mongodb://localhost:27017/aroundb' } = process.env;
 
 app.use(cors());
 app.options('*', cors());
@@ -29,4 +29,4 @@ app.use(errorHandler);
 
 mongoose.connect(DB);
 
-app.listen(PORT, "localhost");
+app.listen(PORT, 'localhost');
