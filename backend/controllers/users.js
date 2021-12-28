@@ -63,25 +63,28 @@ async function registerUser(req, res, next) {
   } = req.body;
   try {
     const hash = await bcrypt.hash(password, 10);
-    const {name: newName, about: newAbout, avatar: newAvatar, email: newEmail, _id} = await user.create({
+    const {
+      name: newName, about: newAbout, avatar: newAvatar, email: newEmail, _id,
+    } = await user.create({
       name,
       about,
       avatar,
       email,
       password: hash,
     });
-    if (_id) res
-      .status(201)
-      .send({
-        user: {
-          name: newName,
-          about: newAbout,
-          avatar: newAvatar,
-          email: newEmail,
-          _id,
-        },
-      });
-    else next(new ServerError('An error has occurred on the server!'));
+    if (_id) {
+      res
+        .status(201)
+        .send({
+          user: {
+            name: newName,
+            about: newAbout,
+            avatar: newAvatar,
+            email: newEmail,
+            _id,
+          },
+        });
+    } else next(new ServerError('An error has occurred on the server!'));
   } catch (err) {
     if (err.code === 11000) next(new DuplicateError('Email allready exists on the server.'));
     next(new ServerError(err));
